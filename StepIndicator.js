@@ -43,7 +43,8 @@ export default class StepIndicator extends PureComponent {
       width: 0,
       height: 0,
       progressBarSize: 0,
-      customStyles
+      customStyles,
+      suposition: Array(this.props.stepCount)
     };
 
     this.progressAnim = new Animated.Value(0)
@@ -159,7 +160,15 @@ export default class StepIndicator extends PureComponent {
     const { labels, stepCount, direction, stepIndicatorContainerStyle } = this.props;
     for(let position = 0 ; position < stepCount ; position++) {
       steps.push(
-        <TouchableWithoutFeedback key={position} onPress={() => this.stepPressed(position)}>
+        <TouchableWithoutFeedback 
+          key={position} 
+          onPress={() => this.stepPressed(position)} 
+          onLayout={(event) => {
+            const { suposition } = this.state;
+            const _suPosition = [...suposition];
+            _suPosition[position] = event.nativeEvent.layout.x + 8;
+            this.setState(() => ({suposition: _suPosition }));
+          }}>
           <View style={[styles.stepContainer, direction === 'vertical' ? {flexDirection: 'column'} : {flexDirection: 'row'}]}>
             {this.renderStep(position)}
           </View>
@@ -180,7 +189,10 @@ export default class StepIndicator extends PureComponent {
         const selectedStepLabelStyle = index === currentPosition ? { color: this.state.customStyles.currentStepLabelColor } : { color: this.state.customStyles.labelColor }
         return (
           <TouchableWithoutFeedback style={[styles.stepLabelItem]} key={index} onPress={() => this.stepPressed(index)}>
-            <View style={[styles.stepLabelItem, stepLabelsStyle && stepLabelsStyle[index] && stepLabelsStyle[index].view, ]}>
+            <View style={[
+              styles.stepLabelItem,
+              stepLabelsStyle && stepLabelsStyle[index] && stepLabelsStyle[index].view,
+              [1, 2].includes(index) && this.state.suposition[index] && {position: "absolute", left: this.state.suposition[index] }]}>
               <Text style={[styles.stepLabel,selectedStepLabelStyle, { fontSize: this.state.customStyles.labelSize }, stepLabelsStyle && stepLabelsStyle[index] && stepLabelsStyle[index].text]}>
                 {label}
               </Text>
@@ -307,7 +319,7 @@ export default class StepIndicator extends PureComponent {
     stepLabelsContainer: {
       alignItems:'center',
       justifyContent:'space-around',
-      marginHorizontal: 16,
+      paddingHorizontal: 16,
     },
     step: {
       alignItems:'center',
