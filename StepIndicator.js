@@ -192,7 +192,7 @@ export default class StepIndicator extends PureComponent {
             <View style={[
               styles.stepLabelItem,
               stepLabelsStyle && stepLabelsStyle[index] && stepLabelsStyle[index].view,
-              [1, 2].includes(index) && this.state.suposition[index] && {position: "absolute", left: this.state.suposition[index] }]}>
+              [1].includes(index) && this.state.suposition[index] && {position: "absolute", left: this.state.suposition[index] }]}>
               <Text style={[styles.stepLabel,selectedStepLabelStyle, { fontSize: this.state.customStyles.labelSize }, stepLabelsStyle && stepLabelsStyle[index] && stepLabelsStyle[index].text]}>
                 {label}
               </Text>
